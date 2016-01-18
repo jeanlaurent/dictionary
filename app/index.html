@@ -11,9 +11,7 @@
         <input type="text">
         <button>?</button>
     </div>
-    <div class="answer-container">
-        <div class="answer"></div>
-    </div>
+    <div class="answer"></div>
 <script src="asset/jquery.min.js"></script>
 <script>
     $(function () {
@@ -22,7 +20,9 @@
             $.get("/words?q=" + query, function(json){
                 var definition = JSON.parse(json);
                 var answer = definition.Word + " : \"" + definition.Explanation + "\" ( from " + definition.Origin + " )";
-                $(".answer").replaceWith(answer);
+                $(".answer").html(answer);
+            }).fail(function(event){
+                $(".answer").html(query + " not found");
             })
         })
     });
