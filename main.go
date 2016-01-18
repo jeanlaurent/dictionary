@@ -65,6 +65,9 @@ func main() {
 	router.HandleFunc("/words", withDictionary(&dictionary, listWords)).Methods("GET")
 	router.HandleFunc("/words", withDictionary(&dictionary, putWord)).Methods("POST")
 
+	router.PathPrefix("/").Handler(http.FileServer(http.Dir("./app/")))
+	http.Handle("/", router)
+
 	fmt.Println("Listening...")
-	http.ListenAndServe(":8080", router)
+	http.ListenAndServe(":8080", nil)
 }
