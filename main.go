@@ -7,9 +7,25 @@ import (
 	"fmt"
 	"io/ioutil"
 
-	"github.com/gorilla/mux"
 	"os"
+
+	"github.com/gorilla/mux"
 )
+
+func searchWord(writer http.ResponseWriter, request *http.Request, dictionary *Dictionary) {
+	query := request.URL.Query()["q"][0]
+	definition, err := dictionary.get(query)
+	if err != nil {
+		http.NotFound(writer, request)
+		return
+	}
+	payload, err := json.Marshal(definition)
+	if err != nil {
+		http.Error(writer, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	writer.Write(payload)
+}
 
 func putWord(writer http.ResponseWriter, request *http.Request, dictionary *Dictionary) {
 	definition, err := readDefinition(request)
@@ -62,6 +78,7 @@ func main() {
 
 	router := mux.NewRouter()
 
+	router.HandleFunc("/words", withDictionary(&dictionary, searchWord)).Queries("q", "{*}")
 	router.HandleFunc("/words", withDictionary(&dictionary, listWords)).Methods("GET")
 	router.HandleFunc("/words", withDictionary(&dictionary, putWord)).Methods("POST")
 

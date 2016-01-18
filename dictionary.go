@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"sync"
 )
 
@@ -24,7 +25,7 @@ type Dictionary struct {
 func (d *Dictionary) add(word, explanation string) {
 	d.locker.Lock()
 	defer d.locker.Unlock()
-	d.Definitions = append(d.Definitions, Definition{word, explanation, d.Origin})
+	d.Definitions = append(d.Definitions, Definition{d.Origin, word, explanation})
 }
 
 func (d *Dictionary) addDefinition(definition Definition) {
@@ -37,4 +38,15 @@ func (d *Dictionary) toJson() ([]byte, error) {
 	d.locker.Lock()
 	defer d.locker.Unlock()
 	return json.Marshal(d)
+}
+
+func (d *Dictionary) get(wordToLookFor string) (Definition, error) {
+	d.locker.Lock()
+	defer d.locker.Unlock()
+	for _, definition := range d.Definitions {
+		if definition.Word == wordToLookFor {
+			return definition, nil
+		}
+	}
+	return Definition{}, errors.New("Not found")
 }

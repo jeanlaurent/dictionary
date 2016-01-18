@@ -7,5 +7,25 @@
 </head>
 <body>
     <img class="logo" src="asset/docker.png">
+    <div class="form">
+        <input type="text">
+        <button>?</button>
+    </div>
+    <div class="answer-container">
+        <div class="answer"></div>
+    </div>
+<script src="asset/jquery.min.js"></script>
+<script>
+    $(function () {
+        $(".form button").click(function(event){
+            var query = $(".form input").val();
+            $.get("/words?q=" + query, function(json){
+                var definition = JSON.parse(json);
+                var answer = definition.Word + " : \"" + definition.Explanation + "\" ( from " + definition.Origin + " )";
+                $(".answer").replaceWith(answer);
+            })
+        })
+    });
+</script>
 </body>
 </html>
