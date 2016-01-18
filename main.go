@@ -8,6 +8,7 @@ import (
 	"io/ioutil"
 
 	"github.com/gorilla/mux"
+	"os"
 )
 
 func putWord(writer http.ResponseWriter, request *http.Request, dictionary *Dictionary) {
@@ -48,14 +49,19 @@ func withDictionary(dictionary *Dictionary, handler func(writer http.ResponseWri
 }
 
 func main() {
-	router := mux.NewRouter()
 
-	dictionary := newDictionary("itsme")
+	hostname, err := os.Hostname()
+	if err != nil {
+		hostname = "unknown"
+	}
+
+	dictionary := newDictionary(hostname)
 	dictionary.add("foo", "is not bar")
 	dictionary.add("bar", "is not foo")
 	dictionary.add("qix", "is not foo nor bar")
 
-	router.HandleFunc("/", withDictionary(&dictionary, listWords)).Methods("GET")
+	router := mux.NewRouter()
+
 	router.HandleFunc("/words", withDictionary(&dictionary, listWords)).Methods("GET")
 	router.HandleFunc("/words", withDictionary(&dictionary, putWord)).Methods("POST")
 
