@@ -15,6 +15,11 @@
 <script src="asset/jquery.min.js"></script>
 <script>
     $(function () {
+        $(".form input").keyup(function(event) {
+            if(event.keyCode == 13) {
+                $(".form button").click();
+            }
+        });
         $(".form button").click(function(event){
             var query = $(".form input").val();
             $.get("/words?q=" + query, function(json){
