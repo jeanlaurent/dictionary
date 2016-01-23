@@ -67,7 +67,7 @@ func withDictionary(dictionary *Dictionary, handler func(writer http.ResponseWri
 }
 
 func main() {
-
+	port := 8080
 	hostname, err := os.Hostname()
 	if err != nil {
 		hostname = "unknown"
@@ -102,6 +102,6 @@ func main() {
 	router.PathPrefix("/").Handler(http.FileServer(http.Dir("./app/")))
 	http.Handle("/", router)
 
-	fmt.Println("Listening...")
-	http.ListenAndServe(":8080", nil)
+	fmt.Println("Listening on", port)
+	http.ListenAndServe(fmt.Sprintf(":%d", port), nil)
 }
