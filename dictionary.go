@@ -40,6 +40,14 @@ func (d *Dictionary) toJson() ([]byte, error) {
 	return json.Marshal(d)
 }
 
+func (d *Dictionary) isEmpty() bool {
+	return len(d.Definitions) == 0
+}
+
+func (d *Dictionary) size() int {
+	return len(d.Definitions)
+}
+
 func (d *Dictionary) get(wordToLookFor string) (Definition, error) {
 	d.locker.Lock()
 	defer d.locker.Unlock()

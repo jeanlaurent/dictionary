@@ -1,0 +1,4 @@
+foo:is not bar
+bar:is not foo
+qix:is not foo nor bar
+baz:does not exist

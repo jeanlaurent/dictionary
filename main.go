@@ -9,6 +9,8 @@ import (
 
 	"os"
 
+	"strings"
+
 	"github.com/gorilla/mux"
 )
 
@@ -70,11 +72,26 @@ func main() {
 	if err != nil {
 		hostname = "unknown"
 	}
-
 	dictionary := newDictionary(hostname)
-	dictionary.add("foo", "is not bar")
-	dictionary.add("bar", "is not foo")
-	dictionary.add("qix", "is not foo nor bar")
+	if _, err := os.Stat("dictionary.txt"); err == nil {
+		data, err := ioutil.ReadFile("dictionary.txt")
+		if err != nil {
+			fmt.Println(err)
+		}
+		lines := strings.Split(string(data), "\n")
+		for _, line := range lines {
+			splittedLine := strings.Split(line, ":")
+			if len(splittedLine) == 2 {
+				dictionary.add(splittedLine[0], splittedLine[1])
+			}
+		}
+	}
+	if dictionary.isEmpty() {
+		dictionary.add("foo", "is not bar")
+		dictionary.add("bar", "is not foo")
+		dictionary.add("qix", "is not foo nor bar")
+	}
+	fmt.Println("I'm",hostname, "I have a dictionary of", dictionary.size(), "words")
 
 	router := mux.NewRouter()
 
