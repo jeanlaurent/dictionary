@@ -1,11 +1,12 @@
 package main
 
 import (
-	"net/http"
-	"fmt"
-	"github.com/gorilla/mux"
-	"io/ioutil"
 	"encoding/json"
+	"fmt"
+	"io/ioutil"
+	"net/http"
+
+	"github.com/gorilla/mux"
 )
 
 const DEFAULT_PORT = 8080
