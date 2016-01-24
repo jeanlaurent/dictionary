@@ -3,6 +3,10 @@ package main
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
+	"io/ioutil"
+	"os"
+	"strings"
 	"sync"
 )
 
@@ -14,6 +18,38 @@ type Definition struct {
 
 func newDictionary(origin string) Dictionary {
 	return Dictionary{Origin: origin, locker: &sync.Mutex{}}
+}
+
+func initDictionary(origin string) Dictionary {
+	dictionary := newDictionary(origin)
+	loadWordFromFile(&dictionary)
+	if dictionary.isEmpty() {
+		loadSampleWords(&dictionary)
+	}
+	return dictionary
+}
+
+func loadWordFromFile(dictionary *Dictionary) {
+	if _, err := os.Stat("dictionary.txt"); err == nil {
+		data, err := ioutil.ReadFile("dictionary.txt")
+		if err != nil {
+			fmt.Println(err)
+		}
+		lines := strings.Split(string(data), "\n")
+		for _, line := range lines {
+			splittedLine := strings.Split(line, ":")
+			if len(splittedLine) == 2 {
+				dictionary.add(splittedLine[0], splittedLine[1])
+			}
+		}
+	}
+
+}
+
+func loadSampleWords(dictionary *Dictionary) {
+	dictionary.add("foo", "is not bar")
+	dictionary.add("bar", "is not foo")
+	dictionary.add("qix", "is not foo nor bar")
 }
 
 type Dictionary struct {
